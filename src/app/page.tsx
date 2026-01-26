@@ -14,6 +14,26 @@ export default function Page() {
     setEndTime("");
   }
 
+  const toEndTimestamp = (timeHHMM: string) => {
+    const [hh, mm] = timeHHMM.split(":").map(Number)
+
+    const now = new Date();
+    const end = new Date();
+
+    end.setHours(hh, mm, 0, 0);
+
+    if (end.getTime() <= now.getTime()) {
+      end.setDate(end.getDate() + 1);
+    }
+
+    // デバッグ用
+    console.log(end.getFullYear());
+    console.log(end.toLocaleDateString().slice(5));
+    console.log(end.toLocaleTimeString().slice(0, -3));
+
+    return end.getTime();
+  };
+
   return (
     <main className="min-h-screen bg-neutral-50 text-neutral-900">
       <div className="mx-auto max-w-xl px-4 py-10">
@@ -59,7 +79,7 @@ export default function Page() {
             <button
               className="rounded-lg border px-4 py-2 disabled:opacity-40"
               onClick={onReset}
-              disabled={isRunning}
+              disabled={isRunning || !taskName || !endTime}
               title="カウントダウンリセットボタン"
             >
               Reset
@@ -84,9 +104,9 @@ export default function Page() {
             状態：{isRunning ? "実行中" : "未開始"}
           </div>
 
-
         </section>
       </div>
     </main>
   );
 }
+
