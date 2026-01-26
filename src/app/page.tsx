@@ -44,7 +44,8 @@ export default function Page() {
             </button>
             <button
               className="rounded-lg border px-4 py-2 disabled:opacity-40"
-              disabled
+              onClick={() => setIsRunning(false)}
+              disabled={!isRunning}
               title="カウントダウン終了ボタン"
             >
               Stop
