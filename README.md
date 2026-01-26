@@ -18,7 +18,7 @@ Googleカレンダーで時間単位のスケジュール管理をしている�
 - 予定情報 + カウントダウンを表示（認証が入るため後回し）
 
 ## Tech Stack
-TypeScript / JavaScript / HTML / CSS（予定）
+Next.js + TypeScript 
 
 ## Status
 WIP（MVP0から実装予定）
