@@ -8,6 +8,12 @@ export default function Page() {
 
   const [isRunning, setIsRunning] = useState(false);
 
+  const onReset = () => {
+    setIsRunning(false);
+    setTaskName("");
+    setEndTime("");
+  }
+
   return (
     <main className="min-h-screen bg-neutral-50 text-neutral-900">
       <div className="mx-auto max-w-xl px-4 py-10">
@@ -52,7 +58,8 @@ export default function Page() {
             </button>
             <button
               className="rounded-lg border px-4 py-2 disabled:opacity-40"
-              disabled
+              onClick={onReset}
+              disabled={isRunning}
               title="カウントダウンリセットボタン"
             >
               Reset
