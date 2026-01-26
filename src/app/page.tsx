@@ -6,6 +6,8 @@ export default function Page() {
   const [taskName, setTaskName] = useState("");
   const [endTime, setEndTime] = useState(""); // "HH:MM"
 
+  const [isRunning, setIsRunning] = useState(false);
+
   return (
     <main className="min-h-screen bg-neutral-50 text-neutral-900">
       <div className="mx-auto max-w-xl px-4 py-10">
@@ -34,7 +36,8 @@ export default function Page() {
           <div className="mt-4 flex gap-2">
             <button
               className="rounded-lg bg-black px-4 py-2 text-white disabled:opacity-40"
-              disabled
+              onClick={() => setIsRunning(true)}
+              disabled={taskName.trim() === "" || endTime.trim() === ""}
               title="カウントダウン開始ボタン"
             >
               Start
@@ -69,6 +72,10 @@ export default function Page() {
 
           <div className="mt-4 text-sm text-neutral-600">残り時間(未実装)</div>
           <div className="mt-1 text-4xl font-semibold tabular-nums">--:--</div>
+          <div className="mt-3 text-xs text-neutral-500">
+            状態：{isRunning ? "実行中" : "未開始"}
+          </div>
+
 
         </section>
       </div>
