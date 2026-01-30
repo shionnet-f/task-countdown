@@ -105,7 +105,6 @@ export default function Page() {
           </div>
           {toEndTimestamp("00:20")}
 
-
         </section>
       </div>
     </main>
