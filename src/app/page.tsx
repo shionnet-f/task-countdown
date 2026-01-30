@@ -103,6 +103,7 @@ export default function Page() {
           <div className="mt-3 text-xs text-neutral-500">
             状態：{isRunning ? "実行中" : "未開始"}
           </div>
+          {toEndTimestamp("00:20")}
 
         </section>
       </div>
