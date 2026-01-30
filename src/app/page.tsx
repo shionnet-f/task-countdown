@@ -26,11 +26,6 @@ export default function Page() {
       end.setDate(end.getDate() + 1);
     }
 
-    // デバッグ用
-    console.log(end.getFullYear());
-    console.log(end.toLocaleDateString().slice(5));
-    console.log(end.toLocaleTimeString().slice(0, -3));
-
     return end.getTime();
   };
 
@@ -103,7 +98,6 @@ export default function Page() {
           <div className="mt-3 text-xs text-neutral-500">
             状態：{isRunning ? "実行中" : "未開始"}
           </div>
-          {toEndTimestamp("00:20")}
 
         </section>
       </div>
