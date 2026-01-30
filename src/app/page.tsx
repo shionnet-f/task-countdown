@@ -5,7 +5,6 @@ import { useState } from "react";
 export default function Page() {
   const [taskName, setTaskName] = useState("");
   const [endTime, setEndTime] = useState(""); // "HH:MM"
-
   const [isRunning, setIsRunning] = useState(false);
 
   const onReset = () => {
@@ -14,7 +13,7 @@ export default function Page() {
     setEndTime("");
   }
 
-  const toEndTimestamp = (timeHHMM: string) => {
+  const computeDeadlineTimestamp = (timeHHMM: string) => {
     const [hh, mm] = timeHHMM.split(":").map(Number)
 
     const now = new Date();
