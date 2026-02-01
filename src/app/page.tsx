@@ -7,13 +7,15 @@ export default function Page() {
   const [endTime, setEndTime] = useState(""); // "HH:MM"
   const [isRunning, setIsRunning] = useState(false);
 
-  const [nowTimestamp, setNowTimestamp] = useState(() => Date.now())
+  const [nowTimestamp, setNowTimestamp] = useState(0)
   const [endTimestamp, setEndTimestamp] = useState<number | null>(null)
 
   const onReset = () => {
     setIsRunning(false);
     setTaskName("");
     setEndTime("");
+    setNowTimestamp(0)
+    setEndTimestamp(null)
   }
 
   const computeDeadlineTimestamp = (timeHHMM: string) => {
@@ -43,8 +45,15 @@ export default function Page() {
     setIsRunning(false)
   };
 
-  console.log(endTime, endTimestamp)
+  useEffect(() => {
+    if (!isRunning) return;
 
+    const intervalId = window.setInterval(() => {
+      setNowTimestamp(Date.now())
+    }, 1000)
+
+    return () => window.clearInterval(intervalId)
+  }, [isRunning])
 
   return (
     <main className="min-h-screen bg-neutral-50 text-neutral-900">
@@ -117,7 +126,6 @@ export default function Page() {
           </div>
           <div className="mt-3 text-xs text-neutral-500">nowTs:{nowTimestamp}</div>
           <div className="mt-3 text-xs text-neutral-500">endTs:{endTimestamp}</div>
-          <div className="mt-3 text-xs text-neutral-500">deltaTs:{endTimestamp - nowTimestamp}</div>
 
         </section>
       </div>
