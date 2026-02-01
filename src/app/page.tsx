@@ -45,16 +45,6 @@ export default function Page() {
     setIsRunning(false)
   };
 
-  useEffect(() => {
-    if (!isRunning) return;
-
-    const intervalId = window.setInterval(() => {
-      setNowTimestamp(Date.now())
-    }, 1000)
-
-    return () => window.clearInterval(intervalId)
-  }, [isRunning])
-
   const remainMs = useMemo(() => {
     if (endTimestamp === null || nowTimestamp === 0) return null;
     return Math.max(0, endTimestamp - nowTimestamp);
@@ -67,6 +57,19 @@ export default function Page() {
     const ss = totalSec % 60
     return `${String(hh).padStart(2, "0")}:${String(mm).padStart(2, "0")}:${String(ss).padStart(2, "0")}`;
   };
+
+  useEffect(() => {
+    if (!isRunning) return;
+    if (remainMs === 0) {
+      setIsRunning(false)
+    }
+
+    const intervalId = window.setInterval(() => {
+      setNowTimestamp(Date.now())
+    }, 1000)
+
+    return () => window.clearInterval(intervalId)
+  }, [isRunning, remainMs])
 
   const remainText = remainMs === null ? "--:--" : formatHHMMSS(remainMs)
 
