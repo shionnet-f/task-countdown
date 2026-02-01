@@ -55,6 +55,11 @@ export default function Page() {
     return () => window.clearInterval(intervalId)
   }, [isRunning])
 
+  const remainMs = useMemo(() => {
+    if (endTimestamp === null || nowTimestamp === 0) return null;
+    return Math.max(0, endTimestamp - nowTimestamp);
+  }, [nowTimestamp, endTimestamp])
+
   return (
     <main className="min-h-screen bg-neutral-50 text-neutral-900">
       <div className="mx-auto max-w-xl px-4 py-10">
