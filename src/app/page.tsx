@@ -33,18 +33,6 @@ export default function Page() {
     return end.getTime();
   };
 
-
-  const onStart = () => {
-    const ts = computeDeadlineTimestamp(endTime)
-    setEndTimestamp(ts)
-    setNowTimestamp(Date.now())
-    setIsRunning(true)
-  };
-
-  const onStop = () => {
-    setIsRunning(false)
-  };
-
   const remainMs = useMemo(() => {
     if (endTimestamp === null || nowTimestamp === 0) return null;
     return Math.max(0, endTimestamp - nowTimestamp);
@@ -72,6 +60,28 @@ export default function Page() {
   }, [isRunning, remainMs])
 
   const remainText = remainMs === null ? "--:--" : formatHHMMSS(remainMs)
+
+  const timerRun = () => {
+    setNowTimestamp(Date.now());
+    setIsRunning(true);
+  };
+
+  const onMainButtonClick = () => {
+    if (isRunning) {
+      setIsRunning(false);
+      return;
+    }
+
+    if (endTimestamp !== null && remainMs !== null && remainMs > 0) {
+      timerRun();
+      return;
+    }
+
+    if (!taskName.trim() || !endTime.trim()) return;
+    setEndTimestamp(computeDeadlineTimestamp(endTime));
+    timerRun();
+  };
+
 
   return (
     <main className="min-h-screen bg-neutral-50 text-neutral-900">
@@ -101,19 +111,10 @@ export default function Page() {
           <div className="mt-4 flex gap-2">
             <button
               className="rounded-lg bg-black px-4 py-2 text-white disabled:opacity-40"
-              onClick={onStart}
-              disabled={taskName.trim() === "" || endTime.trim() === ""}
-              title="カウントダウン開始ボタン"
+              onClick={onMainButtonClick}
+              disabled={!isRunning && !taskName.trim() && endTimestamp === null}
             >
-              Start
-            </button>
-            <button
-              className="rounded-lg border px-4 py-2 disabled:opacity-40"
-              onClick={onStop}
-              disabled={!isRunning}
-              title="カウントダウン終了ボタン"
-            >
-              Stop
+              {isRunning ? "Stop" : "Start"}
             </button>
             <button
               className="rounded-lg border px-4 py-2 disabled:opacity-40"
