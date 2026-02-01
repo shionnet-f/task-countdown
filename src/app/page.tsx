@@ -60,6 +60,16 @@ export default function Page() {
     return Math.max(0, endTimestamp - nowTimestamp);
   }, [nowTimestamp, endTimestamp])
 
+  const formatHHMMSS = (ms: number): string => {
+    const totalSec = Math.floor(ms / 1000)
+    const mm = Math.floor(totalSec / 60)
+    const hh = Math.floor(mm / 60)
+    const ss = totalSec % 60
+    return `${String(hh).padStart(2, "0")}:${String(mm).padStart(2, "0")}:${String(ss).padStart(2, "0")}`;
+  };
+
+  const remainText = remainMs === null ? "--:--" : formatHHMMSS(remainMs)
+
   return (
     <main className="min-h-screen bg-neutral-50 text-neutral-900">
       <div className="mx-auto max-w-xl px-4 py-10">
@@ -124,13 +134,11 @@ export default function Page() {
             {endTime ? endTime : "--:--"}
           </div>
 
-          <div className="mt-4 text-sm text-neutral-600">残り時間(未実装)</div>
-          <div className="mt-1 text-4xl font-semibold tabular-nums">--:--</div>
+          <div className="mt-4 text-sm text-neutral-600">残り時間</div>
+          <div className="mt-1 text-4xl font-semibold tabular-nums">{remainText}</div>
           <div className="mt-3 text-xs text-neutral-500">
             状態：{isRunning ? "実行中" : "未開始"}
           </div>
-          <div className="mt-3 text-xs text-neutral-500">nowTs:{nowTimestamp}</div>
-          <div className="mt-3 text-xs text-neutral-500">endTs:{endTimestamp}</div>
 
         </section>
       </div>
