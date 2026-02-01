@@ -1,20 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export default function Page() {
   const [taskName, setTaskName] = useState("");
   const [endTime, setEndTime] = useState(""); // "HH:MM"
-
   const [isRunning, setIsRunning] = useState(false);
+
+  const [nowTimestamp, setNowTimestamp] = useState(0)
+  const [endTimestamp, setEndTimestamp] = useState<number | null>(null)
 
   const onReset = () => {
     setIsRunning(false);
     setTaskName("");
     setEndTime("");
+    setNowTimestamp(0)
+    setEndTimestamp(null)
   }
 
-  const toEndTimestamp = (timeHHMM: string) => {
+  const computeDeadlineTimestamp = (timeHHMM: string) => {
     const [hh, mm] = timeHHMM.split(":").map(Number)
 
     const now = new Date();
@@ -26,13 +30,48 @@ export default function Page() {
       end.setDate(end.getDate() + 1);
     }
 
-    // デバッグ用
-    console.log(end.getFullYear());
-    console.log(end.toLocaleDateString().slice(5));
-    console.log(end.toLocaleTimeString().slice(0, -3));
-
     return end.getTime();
   };
+
+
+  const onStart = () => {
+    const ts = computeDeadlineTimestamp(endTime)
+    setEndTimestamp(ts)
+    setNowTimestamp(Date.now())
+    setIsRunning(true)
+  };
+
+  const onStop = () => {
+    setIsRunning(false)
+  };
+
+  const remainMs = useMemo(() => {
+    if (endTimestamp === null || nowTimestamp === 0) return null;
+    return Math.max(0, endTimestamp - nowTimestamp);
+  }, [nowTimestamp, endTimestamp])
+
+  const formatHHMMSS = (ms: number): string => {
+    const totalSec = Math.floor(ms / 1000)
+    const mm = Math.floor(totalSec / 60)
+    const hh = Math.floor(mm / 60)
+    const ss = totalSec % 60
+    return `${String(hh).padStart(2, "0")}:${String(mm).padStart(2, "0")}:${String(ss).padStart(2, "0")}`;
+  };
+
+  useEffect(() => {
+    if (!isRunning) return;
+    if (remainMs === 0) {
+      setIsRunning(false)
+    }
+
+    const intervalId = window.setInterval(() => {
+      setNowTimestamp(Date.now())
+    }, 1000)
+
+    return () => window.clearInterval(intervalId)
+  }, [isRunning, remainMs])
+
+  const remainText = remainMs === null ? "--:--" : formatHHMMSS(remainMs)
 
   return (
     <main className="min-h-screen bg-neutral-50 text-neutral-900">
@@ -62,7 +101,7 @@ export default function Page() {
           <div className="mt-4 flex gap-2">
             <button
               className="rounded-lg bg-black px-4 py-2 text-white disabled:opacity-40"
-              onClick={() => setIsRunning(true)}
+              onClick={onStart}
               disabled={taskName.trim() === "" || endTime.trim() === ""}
               title="カウントダウン開始ボタン"
             >
@@ -70,7 +109,7 @@ export default function Page() {
             </button>
             <button
               className="rounded-lg border px-4 py-2 disabled:opacity-40"
-              onClick={() => setIsRunning(false)}
+              onClick={onStop}
               disabled={!isRunning}
               title="カウントダウン終了ボタン"
             >
@@ -98,12 +137,11 @@ export default function Page() {
             {endTime ? endTime : "--:--"}
           </div>
 
-          <div className="mt-4 text-sm text-neutral-600">残り時間(未実装)</div>
-          <div className="mt-1 text-4xl font-semibold tabular-nums">--:--</div>
+          <div className="mt-4 text-sm text-neutral-600">残り時間</div>
+          <div className="mt-1 text-4xl font-semibold tabular-nums">{remainText}</div>
           <div className="mt-3 text-xs text-neutral-500">
             状態：{isRunning ? "実行中" : "未開始"}
           </div>
-          {toEndTimestamp("00:20")}
 
         </section>
       </div>
