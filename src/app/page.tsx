@@ -1,11 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export default function Page() {
   const [taskName, setTaskName] = useState("");
   const [endTime, setEndTime] = useState(""); // "HH:MM"
   const [isRunning, setIsRunning] = useState(false);
+
+  const [nowTimestamp, setNowTimestamp] = useState(() => Date.now())
+  const [endTimestamp, setEndTimestamp] = useState<number | null>(null)
 
   const onReset = () => {
     setIsRunning(false);
@@ -27,6 +30,21 @@ export default function Page() {
 
     return end.getTime();
   };
+
+
+  const onStart = () => {
+    const ts = computeDeadlineTimestamp(endTime)
+    setEndTimestamp(ts)
+    setNowTimestamp(Date.now())
+    setIsRunning(true)
+  };
+
+  const onStop = () => {
+    setIsRunning(false)
+  };
+
+  console.log(endTime, endTimestamp)
+
 
   return (
     <main className="min-h-screen bg-neutral-50 text-neutral-900">
@@ -56,7 +74,7 @@ export default function Page() {
           <div className="mt-4 flex gap-2">
             <button
               className="rounded-lg bg-black px-4 py-2 text-white disabled:opacity-40"
-              onClick={() => setIsRunning(true)}
+              onClick={onStart}
               disabled={taskName.trim() === "" || endTime.trim() === ""}
               title="カウントダウン開始ボタン"
             >
@@ -64,7 +82,7 @@ export default function Page() {
             </button>
             <button
               className="rounded-lg border px-4 py-2 disabled:opacity-40"
-              onClick={() => setIsRunning(false)}
+              onClick={onStop}
               disabled={!isRunning}
               title="カウントダウン終了ボタン"
             >
@@ -97,6 +115,9 @@ export default function Page() {
           <div className="mt-3 text-xs text-neutral-500">
             状態：{isRunning ? "実行中" : "未開始"}
           </div>
+          <div className="mt-3 text-xs text-neutral-500">nowTs:{nowTimestamp}</div>
+          <div className="mt-3 text-xs text-neutral-500">endTs:{endTimestamp}</div>
+          <div className="mt-3 text-xs text-neutral-500">deltaTs:{endTimestamp - nowTimestamp}</div>
 
         </section>
       </div>
