@@ -82,6 +82,15 @@ export default function Page() {
     timerRun();
   };
 
+  const canStartNew = taskName.trim() !== "" && endTime.trim() !== "";
+  const canResume =
+    endTimestamp !== null &&
+    remainMs !== null &&
+    remainMs > 0 &&
+    !isRunning;
+
+  const canClickMain = isRunning || canStartNew || canResume;
+  const canReset = !isRunning && endTimestamp !== null;
 
   return (
     <main className="min-h-screen bg-neutral-50 text-neutral-900">
@@ -112,14 +121,14 @@ export default function Page() {
             <button
               className="rounded-lg bg-black px-4 py-2 text-white disabled:opacity-40"
               onClick={onMainButtonClick}
-              disabled={!isRunning && !taskName.trim() && endTimestamp === null}
+              disabled={!canClickMain}
             >
               {isRunning ? "Stop" : "Start"}
             </button>
             <button
               className="rounded-lg border px-4 py-2 disabled:opacity-40"
               onClick={onReset}
-              disabled={isRunning || !taskName || !endTime}
+              disabled={!canReset}
               title="カウントダウンリセットボタン"
             >
               Reset
